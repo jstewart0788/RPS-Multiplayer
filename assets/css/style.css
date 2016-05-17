@@ -1,0 +1,47 @@
+body
+{
+	text-align: center;
+	cursor: default;
+	font-family: 'Amatic SC', cursive;
+	font-weight: bold;
+}
+
+#headerLogo
+{
+	max-height: 200px;
+	margin-bottom: 50px;
+}
+#selectDiv
+{
+	height: 125px;
+}
+
+#console
+{
+	font-size: 25px;
+}
+
+#consoleInput
+{
+	font-size: 20px;
+}
+
+.position
+{
+	margin-top: 40px;
+	margin: 20px;
+}
+.inputButton
+{
+	max-height: 100px;
+	margin-top: 15px;
+	margin-left: 20px;
+	margin-right: 20px;
+}
+
+.inputButton:active
+{
+	border: 10px solid black;
+	border-radius: 50%;
+	max-height: 100px;
+}
