@@ -4,7 +4,8 @@
 var rpsData = new Firebase("https://intense-inferno-5888.firebaseio.com/");
 
 $( document ).ready( function(){
-$("#console").append('\n' +'<br>');
+	$("#console").append('\n' +'<br>');
+	setInterval(game.checkMovesMade, 500);
 } );
 
 //Function for joining a game
@@ -18,7 +19,8 @@ $("#joinGame").on("click",function(){
 				1: {
 					name: game.playerName,
 					wins: 0,
-					loses: 0
+					loses: 0,
+					ties: 0
 				}
 		});
 		rpsData.child("players").child(1).onDisconnect().remove();
@@ -31,7 +33,8 @@ $("#joinGame").on("click",function(){
 				2: {
 					name: game.playerName,
 					wins: 0,
-					loses: 0
+					loses: 0,
+					ties: 0
 				}
 		});
 		rpsData.child("players").child(2).onDisconnect().remove();
@@ -103,9 +106,9 @@ var game = {
 	playerMoveChosen: false,
 	opponentMoveChosen: false,
 	playerWins: 0,
-	opponentWins: 0,
 	playerLosses: 0,
-	opponentLosses: 0,
+	playerTies: 0,
+	turnOver: false,
 	imageArray:["rock","paper","scissors"],
 	joinGame: function()
 	{
@@ -121,10 +124,11 @@ var game = {
 			$(tempImg).attr("data-move", game.imageArray[i]);
 			$("#selectDiv").append(tempImg);
 		}
+		$("#playerRecord").text(game.playerName + "'s Record- Wins: " + game.playerWins + " Losses: " + game.playerLosses + " Ties: " + game.playerTies);
 	},
 	determineWinner: function()
 	{
-
+		console.log("Winner being determined!!");
 		if (game.playerMove == game.opponentMove ) //covers all ties
 		{
 				game.playersTie();
@@ -167,36 +171,41 @@ var game = {
 	},
 	playerWin: function()
 	{
-		game.playerWins ++;
+		game.progressGame();
+		game.playerWins++;
 		rpsData.child("players").child(game.playerNumber).update({
 				wins: game.playerWins
 		});
 		addTextToConsole(game.playerName + " has won the game!", true);
-		addTextToConsole(game.playerName + "- Wins: " +game.playerWins + " Loses: " + game.playerLosses , true);
-		addTextToConsole(game.opponentName + "- Wins: " +game.opponentWins + " Loses: " + game.opponentLosses , true);
-		game.progressGame();
 	},
 	playerLoss: function()
 	{
-		game.playerLosses ++;
+		game.progressGame();
+		game.playerLosses++;
 		rpsData.child("players").child(game.playerNumber).update({
 				loses: game.playerLosses
 		});
-		game.progressGame();
 	},
 	playersTie: function()
 	{
-		addTextToConsole("Players have tied the game!", true);
-		addTextToConsole(game.playerName + "- Wins: " +game.playerWins + " Loses: " + game.playerLosses , true);
-		addTextToConsole(game.opponentName + "- Wins: " +game.opponentWins + " Loses: " + game.opponentLosses , true);
 		game.progressGame();
+		game.playerTies++;
+		if (game.playerNumber == 1)
+		{
+			addTextToConsole("Players have tied the game!", true);
+		}
 	},
 	progressGame: function()
 	{
-		game.playerMove = null;
-		game.playerMoveChosen = false;
-		rpsData.child("players").child(game.playerNumber).child("move").remove();
-
+		game.turnOver = true;
+	},
+	checkMovesMade: function()
+	{
+			//if both players have made their move evaluate winner
+		if(game.playerMoveChosen && game.opponentMoveChosen)
+		{
+			game.determineWinner();
+		}
 	}
 };
 
@@ -223,19 +232,28 @@ rpsData.on("value", function(snapshot) {
 		if(game.playerNumber == 2) game.opponentNumber = 1;
 
 		game.opponentName = snapshot.child("players").child(game.opponentNumber).child("name").val();
-		game.opponentWins = snapshot.child("players").child(game.opponentNumber).child("wins").val();
-		game.opponentLosses = snapshot.child("players").child(game.opponentNumber).child("loses").val();
-
 
 		game.playerMoveChosen = snapshot.child("players").child(game.playerNumber).child("move").exists();
 		game.opponentMoveChosen = snapshot.child("players").child(game.opponentNumber).child("move").exists();
 	}
 
-	//if both players have made their move evaluate winner
-	if(game.playerMoveChosen && game.opponentMoveChosen)
+	if(game.opponentMoveChosen)
 	{
 		game.opponentMove = snapshot.child("players").child(game.opponentNumber).child("move").val();
-		game.determineWinner();
+	}
+
+	if(game.turnOver)
+	{
+		rpsData.child("players").child(game.playerNumber).child("move").remove();
+		rpsData.child("players").child(game.opponentNumber).child("move").remove();
+		game.playerMove = null;
+		game.playerMoveChosen = false;
+		game.turnOver = false;
+	}
+
+	if(snapshot.child("players").child(game.playerNumber).exists())
+	{
+		$("#playerRecord").text(game.playerName + "'s Record- Wins: " + game.playerWins + " Losses: " + game.playerLosses + " Ties: " + game.playerTies);
 	}
 
 });

@@ -16,6 +16,11 @@ body
 	height: 125px;
 }
 
+#playerRecord
+{
+	font-size: 40px;
+}
+
 #console
 {
 	font-size: 25px;
