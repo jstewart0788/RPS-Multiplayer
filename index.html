@@ -6,6 +6,7 @@
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
   <link href='https://fonts.googleapis.com/css?family=Amatic+SC:700' rel='stylesheet' type='text/css'>
 	<link rel="stylesheet" href="assets/css/style.css">
+  <script src="https://cdn.firebase.com/js/client/2.4.1/firebase.js"></script>
 
 </head>
 <body>
@@ -24,8 +25,12 @@
         </div>
         <div class="row">
           <div class="col-sm-12" id="selectDiv">
-            <img src="assets/images/check.png" class="inputButton" id="check">
-            <img src="assets/images/cross.png" class="inputButton" id="cross">
+            <div class="input-group">
+              <input type="text" class="form-control" placeholder="Tell me your name . . ." id="nameInput">
+              <span class="input-group-btn">
+                <button class="btn btn-default" type="button" id="joinGame">Join!</button>
+              </span>
+          </div>
           </div>
         </div>
       </div>
