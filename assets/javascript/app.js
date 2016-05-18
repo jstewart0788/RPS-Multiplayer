@@ -14,6 +14,7 @@ $(document).on('click', '.inputButton', function(){
 });
 */
 
+//Function for joining a game
 $("#joinGame").on("click",function(){
 	var textInput = $("#nameInput").val().trim();
 	addTextToConsole("Console: " + textInput + " has joined the game");
@@ -68,7 +69,7 @@ $("#submitText").on("click",function(){
 
 function addTextToConsole(text)
 {
-	$("#console").append(text + '\n' +'<br>');
+	rpsData.child("chat").push({chatLog: text + '\n' +'<br>'});
 	var psconsole = $('#console');
     if(psconsole.length)
        psconsole.scrollTop(psconsole[0].scrollHeight - psconsole.height());
@@ -103,6 +104,14 @@ rpsData.on("value", function(snapshot) {
 	game.player1LoggedIn = snapshot.child("players").child("1").exists();
 
 	game.player2LoggedIn = snapshot.child("players").child("2").exists();
+
+});
+
+rpsData.child("chat").on("child_added", function(childSnapshot, prevChildKey){
+	$("#console").append(childSnapshot.val().chatLog);
+	var psconsole = $('#console');
+    if(psconsole.length)
+       psconsole.scrollTop(psconsole[0].scrollHeight - psconsole.height());
 
 });
 
