@@ -16,20 +16,10 @@ $(document).on('click', '.inputButton', function(){
 
 //Function for joining a game
 $("#joinGame").on("click",function(){
-	var textInput = $("#nameInput").val().trim();
-	addTextToConsole(textInput + " has joined the game", true);
-	game.playerName = textInput;
-	$("#selectDiv").empty();
-	for(var i = 0; i<game.imageArray.length; i++)
-	{
-		var tempImg = $("<img>");
-		$(tempImg).attr("src","assets/images/"+ game.imageArray[i] +".png")
-		$(tempImg).attr("class", "inputButton");
-		$(tempImg).attr("data-move", game.imageArray[i]);
-		$("#selectDiv").append(tempImg);
-	}
+
 	if(!game.player1LoggedIn)
 	{
+		game.joinGame();
 		game.playerNumber=1;
 		rpsData.child("players").update({
 				1: {
@@ -42,6 +32,7 @@ $("#joinGame").on("click",function(){
 	}
 	else if(!game.player2LoggedIn)
 	{
+		game.joinGame();
 		game.playerNumber=2;
 		rpsData.child("players").update({
 				2: {
@@ -53,8 +44,10 @@ $("#joinGame").on("click",function(){
 		rpsData.child("players").child(2).onDisconnect().remove();
 	}
 	else
-	{
-		alert("maximum number of players reached!");
+	{		
+		var textInput = $("#nameInput").val().trim();
+		addTextToConsole(textInput + " has attempted to join the game, but it is full!", true);
+		game.playerName = textInput;
 	}	
 
 	return false;
@@ -96,7 +89,21 @@ var game = {
 	player2Wins: 0,
 	player1Losses: 0,
 	player2Losses: 0,
-	imageArray:["rock","paper","scissors"]
+	imageArray:["rock","paper","scissors"],
+	joinGame: function(){
+		var textInput = $("#nameInput").val().trim();
+		addTextToConsole(textInput + " has joined the game", true);
+		game.playerName = textInput;
+		$("#selectDiv").empty();
+		for(var i = 0; i<game.imageArray.length; i++)
+		{
+			var tempImg = $("<img>");
+			$(tempImg).attr("src","assets/images/"+ game.imageArray[i] +".png")
+			$(tempImg).attr("class", "inputButton");
+			$(tempImg).attr("data-move", game.imageArray[i]);
+			$("#selectDiv").append(tempImg);
+		}
+	}
 };
 
 rpsData.on("value", function(snapshot) {
