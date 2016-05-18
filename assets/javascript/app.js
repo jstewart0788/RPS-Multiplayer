@@ -17,7 +17,7 @@ $(document).on('click', '.inputButton', function(){
 //Function for joining a game
 $("#joinGame").on("click",function(){
 	var textInput = $("#nameInput").val().trim();
-	addTextToConsole("Console: " + textInput + " has joined the game");
+	addTextToConsole(textInput + " has joined the game", true);
 	game.playerName = textInput;
 	$("#selectDiv").empty();
 	for(var i = 0; i<game.imageArray.length; i++)
@@ -62,26 +62,34 @@ $("#joinGame").on("click",function(){
 
 $("#submitText").on("click",function(){
 	var textInput = $("#consoleInput").val().trim();
-	addTextToConsole(textInput);
+	$("#consoleInput").val("");
+	addTextToConsole(textInput, false);
 	return false;
 });
 
 
-function addTextToConsole(text)
+function addTextToConsole(text, systemMessage)
 {
-	rpsData.child("chat").push({chatLog: text + '\n' +'<br>'});
-	var psconsole = $('#console');
-    if(psconsole.length)
-       psconsole.scrollTop(psconsole[0].scrollHeight - psconsole.height());
+	if(!systemMessage)
+	{
+		if(game.playerName == null)
+			rpsData.child("chat").push({chatLog: "Guest: " + text + '\n' +'<br>'});
+		else
+			rpsData.child("chat").push({chatLog: game.playerName+ ": " + text + '\n' +'<br>'});
+	}
+	else
+	{
+		rpsData.child("chat").push({chatLog: "Console: " + text + '\n' +'<br>'});
+	}
 }
 
 var game = {
 	player1LoggedIn: false,
 	player2LoggedIn: false,
-	playerName: "",
+	playerName: null,
 	playerNumber: 0,
-	player1Move: "",
-	player2Move: "",
+	player1Move: null,
+	player2Move: null,
 	player1MoveChosen: false,
 	player2MoveChosen: false,
 	player1Wins: 0,
