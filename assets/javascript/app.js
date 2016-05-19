@@ -190,6 +190,9 @@ var game = {
 	{
 		game.progressGame();
 		game.playerTies++;
+		rpsData.child("players").child(game.playerNumber).update({
+				ties: game.playerTies
+		});
 		if (game.playerNumber == 1)
 		{
 			addTextToConsole("Players have tied the game!", true);
@@ -253,6 +256,11 @@ rpsData.on("value", function(snapshot) {
 
 	if(snapshot.child("players").child(game.playerNumber).exists())
 	{
+		/*
+		game.playerWins = snapshot.child("players").child(game.playerNumber).child(wins).val();
+		game.playerLosses = snapshot.child("players").child(game.playerNumber).child(loses).val();
+		game.playerTies = snapshot.child("players").child(game.playerNumber).child(ties).val();
+		*/
 		$("#playerRecord").text(game.playerName + "'s Record- Wins: " + game.playerWins + " Losses: " + game.playerLosses + " Ties: " + game.playerTies);
 	}
 
